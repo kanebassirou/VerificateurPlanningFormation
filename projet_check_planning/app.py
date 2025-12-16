@@ -105,16 +105,16 @@ st.markdown("""
     }
     
     .kpi-card {
-        background: transparent;
+        background: white;
         padding: 2rem;
         border-radius: 20px;
         box-shadow: 0 8px 30px rgba(0,0,0,0.08);
-        border: 1px solid rgba(255,255,255,0.2);
+        border: 1px solid rgba(226, 232, 240, 0.8);
         backdrop-filter: blur(10px);
         transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         position: relative;
         overflow: hidden;
-        color: white;
+        color: #2d3748;
     }
     
     .kpi-card::before {
@@ -125,33 +125,31 @@ st.markdown("""
         right: 0;
         height: 4px;
         background: linear-gradient(90deg, #667eea, #764ba2);
-        color: white;
-
     }
     
     .kpi-card:hover {
         transform: translateY(-5px);
         box-shadow: 0 15px 35px rgba(102,126,234,0.15);
-        color: white;
-
+        color: #2d3748;
     }
     
     .kpi-icon {
         font-size: 2.5rem;
         margin-bottom: 1rem;
         opacity: 0.9;
+        color: #667eea;
     }
     
     .kpi-value {
         font-size: 3rem;
         font-weight: 800;
-        color: white;
+        color: #2d3748;
         margin: 0.5rem 0;
         line-height: 1;
     }
     
     .kpi-label {
-        color: white;
+        color: #718096;
         font-size: 0.9rem;
         text-transform: uppercase;
         letter-spacing: 1.5px;
@@ -337,7 +335,7 @@ st.markdown("""
     
     /* Button Styles */
     .stButton > button {
-        background: transparent;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
         border: none;
         padding: 0.5rem 1.5rem;
@@ -679,6 +677,8 @@ if uploaded_file:
                             ues_df['Ecart CM'] = ues_df['cm_p'] - ues_df['cm_a']
                             ues_df['Ecart TD'] = ues_df['td_p'] - ues_df['td_a']
                             ues_df['Ecart TP'] = ues_df['tp_p'] - ues_df['tp_a']
+                            # Calcul de l'équivalence TD: 1h CM = 1.5h TD, 1h TD = 1h TD, 1h TP = 0.5h TD
+                            ues_df['Equivalence_TD'] = (ues_df['cm_a'] * 1.5) + ues_df['td_a'] + (ues_df['tp_a'] * 0.5)
                             
                             st.session_state.ues_df = ues_df
                             st.session_state.enseignants = enseignants
@@ -710,6 +710,8 @@ if uploaded_file:
                             ues_df['Ecart CM'] = ues_df['cm_p'] - ues_df['cm_a']
                             ues_df['Ecart TD'] = ues_df['td_p'] - ues_df['td_a']
                             ues_df['Ecart TP'] = ues_df['tp_p'] - ues_df['tp_a']
+                            # Calcul de l'équivalence TD: 1h CM = 1.5h TD, 1h TD = 1h TD, 1h TP = 0.5h TD
+                            ues_df['Equivalence_TD'] = (ues_df['cm_a'] * 1.5) + ues_df['td_a'] + (ues_df['tp_a'] * 0.5)
                             
                             # Store in session state
                             st.session_state.ues_df = ues_df
@@ -997,6 +999,7 @@ if st.session_state.analyzed:
         st.dataframe(
             ues_df.style
             .background_gradient(subset=['Ecart CM', 'Ecart TD', 'Ecart TP'], cmap='RdYlGn')
+            .background_gradient(subset=['Equivalence_TD'], cmap='Blues')
             .format("{:.1f}"),
             use_container_width=True,
             height=400
